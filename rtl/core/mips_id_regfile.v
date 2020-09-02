@@ -1,15 +1,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//     Auther:        Shou-Li Hsu
-//     Entity Name:   mips_id_regfile
-//     Purpose:       This is the only register file in the MIPS processor. 
-//     
-//     Version:       1.0
-//     Filename:      mips_id_regfile.v
-//     Date Created:  30 Aug, 2020
-//     Last Modified: 30 Aug, 2020
+//    ╔═════════╗     Auther:          Shou-Li Hsu
+//    ║ H A N K ║     Website:         www.hankhsu.tw
+//    ║ H S U   ║     Entity Name:     mips_id_regfile
+//    ║ 1 9 9 6 ║     Purpose:         This is the register file for instruction 
+//    ╚═════════╝                      decode stage.
+//
+//                    Version:         1.0
+//                    Filename:        mips_id_regfile.v
+//                    Date Created:    August 30, 2020
+//                    Last Modified:   August 30, 2020
 //
 ////////////////////////////////////////////////////////////////////////////////
+
 
 module mips_id_regfile (
     input wire clk,

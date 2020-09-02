@@ -1,24 +1,27 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//     Auther:        Shou-Li Hsu
-//     Entity Name:   mips_id_decode
-//     Purpose:       This is the instruction decode stage of the MIPS pipelined processor.
-//     
-//     Version:       1.0
-//     Filename:      mips_id_decode.v
-//     Date Created:  30 Aug, 2020
-//     Last Modified: 31 Aug, 2020
+//    ╔═════════╗     Auther:          Shou-Li Hsu
+//    ║ H A N K ║     Website:         www.hankhsu.tw
+//    ║ H S U   ║     Entity Name:     mips_id_decode
+//    ║ 1 9 9 6 ║     Purpose:         This is the decoder for instruction 
+//    ╚═════════╝                      decode stage.
+//
+//                    Version:         1.0
+//                    Filename:        mips_id_decode.v
+//                    Date Created:    August 30, 2020
+//                    Last Modified:   August 31, 2020
 //
 ////////////////////////////////////////////////////////////////////////////////
+
 
 module mips_id_decode (
     // IF to ID information
     input wire [`MIPS_INST_WIDTH-1:0] if2id_inst,
     input wire [`MIPS_ADDR_WIDTH-1:0] if2id_pc_incr,
 
-    input wire if2id_prdt_taken,
+    input wire if2id_prdt_taken,  // todo
 
-    // Decoded information and info-bus
+    // Decoded rs, rt info and info-bus
     output wire dec_rs_x0,
     output wire dec_rt_x0,
     output wire dec_rs_en,
@@ -31,7 +34,7 @@ module mips_id_decode (
     output wire [`MIPS_DECINFO_WIDTH-1:0] dec_info,
     output wire [   `MIPS_ADDR_WIDTH-1:0] dec_imm,
 
-    // Decoded BJP
+    // Decoded BJP info
     output wire dec_bjp,
     output wire dec_j,
     output wire dec_jr,
@@ -39,8 +42,8 @@ module mips_id_decode (
     output wire dec_jalr,
     output wire dec_bxx,
 
-    output wire [`MIPS_RFIDX_WIDTH-1:0] dec_jmpr_rsidx,
-    output wire [ `MIPS_ADDR_WIDTH-1:0] dec_bjp_imm
+    output wire [`MIPS_ADDR_WIDTH-1:0] dec_j_imm,
+    output wire [`MIPS_ADDR_WIDTH-1:0] dec_b_imm
 );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -231,12 +234,10 @@ assign dec_jalr = mips_jalr;
 assign dec_bxx  = mips_branch;
 assign dec_bjp = dec_j | dec_jr | dec_jal | dec_jalr | dec_bxx;
 
+
 wire alu_op = mips_op | mips_op_imm | mips_lui;
 wire bjp_op = mips_branch | mips_j | mips_jr | mips_jalr | mips_jalr;
 
-// For branch prediction unit
-assign dec_jmpr_rsidx = rs;
-assign dec_bjp_imm = {32{mips_jalr | mips_j}} & mips_j_imm;
 
 // ALU info
 wire [`MIPS_DECINFO_ALU_WIDTH-1:0] alu_info_bus;
@@ -291,5 +292,8 @@ wire [31:0] mips_imm =
     {32{mips_imm_sel_j}} & mips_j_imm;
 
 assign dec_imm = mips_imm;
+
+assign dec_j_imm = mips_j_imm;
+assign dec_b_imm = mips_b_imm;
 
 endmodule  // mips_id_decode
