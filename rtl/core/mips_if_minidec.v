@@ -27,6 +27,7 @@ module mips_if_minidec (
     output wire [`MIPS_RFIDX_WIDTH-1:0] dec_rt_idx,
 
     // Decoded BJP info
+    output wire dec_bjp,
     output wire dec_j,
     output wire dec_jr,
     output wire dec_jal,
