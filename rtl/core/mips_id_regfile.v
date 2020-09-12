@@ -9,7 +9,7 @@
 //                    Version:         1.0
 //                    Filename:        mips_id_regfile.v
 //                    Date Created:    August 30, 2020
-//                    Last Modified:   August 30, 2020
+//                    Last Modified:   September 12, 2020
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +29,7 @@ module mips_id_regfile (
     input wire [ `MIPS_DATA_WIDTH-1:0] wb_dest_dat
 );
 
-wire [`MIPS_DE-1:0] rf_r [0:`MIPS_RFREG_NUM-1];
+wire [`MIPS_DATA_WIDTH-1:0] rf_r [0:`MIPS_RFREG_NUM-1];
 wire [`MIPS_RFREG_NUM-1:0] rf_wen;
 
 genvar i;
@@ -43,7 +43,7 @@ generate
         else begin
             assign rf_wen[i] = wb_dest_en & wb_dest_idx == i;
             dff_ce #(
-                .DW(1)
+                .DW(`MIPS_DATA_WIDTH)
             ) dff_ce_inst (
                 .clk(clk),
                 .ce(rf_wen[i]),

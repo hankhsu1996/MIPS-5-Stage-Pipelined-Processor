@@ -28,10 +28,13 @@ module mips_if (
     input  wire [`MIPS_DATA_WIDTH-1:0] I_rdata,
     
     // IF to ID interface
-    output wire [`MIPS_ADDR_WIDTH-1:0] if2id_inst,
-    output wire [`MIPS_ADDR_WIDTH-1:0] if2id_pc,
+    output wire [`MIPS_INST_WIDTH-1:0] if2id_inst,
+    output wire [`MIPS_ADDR_WIDTH-1:0] if2id_pc_incr,
 
-    output wire if2id_prdt_taken
+    output wire if2id_prdt_taken,
+
+    output wire [`MIPS_RFIDX_WIDTH-1:0] if2id_rs_idx,
+    output wire [`MIPS_RFIDX_WIDTH-1:0] if2id_rt_idx
 );
 
 
@@ -41,7 +44,7 @@ wire [`MIPS_ADDR_WIDTH-1:0] pc_r;
 wire [`MIPS_ADDR_WIDTH-1:0] pc_nxt;
 wire [`MIPS_ADDR_WIDTH-1:0] pc_incr = pc_r + pc_incr_ofst;
 
-
+assign if2id_pc_incr = pc_incr;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Mini instruction decoder
@@ -81,6 +84,10 @@ mips_if_minidec mips_if_minidec_inst (
     .dec_j_imm   (minidec_j_imm),
     .dec_b_imm   (minidec_b_imm)
 );
+
+// Pass decoded rs and rt index to ID stage
+assign if2id_rs_idx = minidec_rs_idx;
+assign if2id_rt_idx = minidec_rt_idx;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -123,10 +130,9 @@ assign pc_nxt = bjp_req ? prdt_pc : pc_incr;
 
 dff_ce_rstn_0 # (
     .DW (`MIPS_ADDR_WIDTH)
-) pc_dff_ce_rstn_0 (
+) pc_dff_rstn_0 (
     .clk   (clk),
     .rst_n (rst_n),
-    .ce    (pc_en),
     .d_i   (pc_nxt),
     .q_o   (pc_r)
 );

@@ -1,2 +1,8 @@
+# PDF files
 **/*.pdf
+
+# Iverilog output files
 **/a.out
+
+# VS code 
+.vscode

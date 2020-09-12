@@ -15,3 +15,5 @@
 `define MIPS_CONFIG_AW_IS_32
 
 `define DISABLE_SV_ASSERTION
+
+`default_nettype none

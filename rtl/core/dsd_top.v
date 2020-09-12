@@ -64,58 +64,57 @@ wire [31:0] DCACHE_rdata;
 	// 3. instruction cache
 
 
-	MIPS_Pipeline i_MIPS(
+	mips_core i_MIPS(
 		// control interface
-		clk, 
-		rst_n,
+		.clk(clk), 
+		.rst_n(rst_n),
 //----------I cache interface-------		
-		ICACHE_ren,
-		ICACHE_wen,
-		ICACHE_addr,
-		ICACHE_wdata,
-		ICACHE_stall,
-		ICACHE_rdata,
+		.I_read(ICACHE_ren),
+		.I_write(ICACHE_wen),
+		.I_addr(ICACHE_addr),
+		.I_rdata(ICACHE_rdata),
+		.I_wdata(ICACHE_wdata),
+		.I_stall(ICACHE_stall),
 //----------D cache interface-------
-		DCACHE_ren,
-		DCACHE_wen,
-		DCACHE_addr,
-		DCACHE_wdata,
-		DCACHE_stall,
-		DCACHE_rdata
+		.D_read(DCACHE_ren),
+		.D_write(DCACHE_wen),
+		.D_addr(DCACHE_addr),
+		.D_rdata(DCACHE_rdata),
+		.D_wdata(DCACHE_wdata),
+		.D_stall(DCACHE_stall)
 	);
 	
 	cache_d cache_d_inst (
-		clk,
-		~rst_n,
-		DCACHE_ren,
-		DCACHE_wen,
-		DCACHE_addr,
-		DCACHE_wdata,
-		DCACHE_stall,
-		DCACHE_rdata,
-		mem_read_D,
-		mem_write_D,
-		mem_addr_D,
-		mem_rdata_D,
-		mem_wdata_D,
-		mem_ready_D
+		.clk(clk),
+		.proc_reset(~rst_n),
+        .proc_stall(DCACHE_stall),
+		.proc_read(DCACHE_ren),
+		.proc_write(DCACHE_wen),
+		.proc_addr(DCACHE_addr),
+		.proc_rdata(DCACHE_rdata),
+		.proc_wdata(DCACHE_wdata),
+		.mem_read(mem_read_D),
+		.mem_write(mem_write_D),
+		.mem_addr(mem_addr_D),
+		.mem_rdata(mem_rdata_D),
+		.mem_wdata(mem_wdata_D),
+		.mem_ready(mem_ready_D)
 	);
 
 	cache_i cache_i_inst (
-		clk,
-		~rst_n,
-		ICACHE_ren,
-		ICACHE_wen,
-		ICACHE_addr,
-		ICACHE_wdata,
-		ICACHE_stall,
-		ICACHE_rdata,
-		mem_read_I,
-		mem_write_I,
-		mem_addr_I,
-		mem_rdata_I,
-		mem_wdata_I,
-		mem_ready_I
+		.clk(clk),
+		.proc_reset(~rst_n),
+        .proc_stall(ICACHE_stall),
+		.proc_read(ICACHE_ren),
+		.proc_write(ICACHE_wen),
+		.proc_addr(ICACHE_addr),
+		.proc_rdata(ICACHE_rdata),
+		.proc_wdata(ICACHE_wdata),
+		.mem_read(mem_read_I),
+		.mem_write(mem_write_I),
+		.mem_addr(mem_addr_I),
+		.mem_rdata(mem_rdata_I),
+		.mem_wdata(mem_wdata_I),
+		.mem_ready(mem_ready_I)
 	);
 endmodule
-
