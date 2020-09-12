@@ -6,3 +6,6 @@
 
 # VS code 
 .vscode
+
+# Testbench executable
+test
