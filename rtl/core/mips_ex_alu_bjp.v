@@ -30,17 +30,27 @@ module mips_ex_alu_bjp (
     output wire bjp_req_alu_cmp_eq,
     output wire bjp_req_alu_cmp_ne,
     output wire bjp_req_alu_cmp_lez,
-    output wire bjp_req_alu_cmp_gtz
+    output wire bjp_req_alu_cmp_gtz,
+    output wire bjp_req_alu_add
 );
 
 assign bjp_req_alu_op1 = bjp_rs;
 assign bjp_req_alu_op1 = bjp_rt;
 
-assign bjp_req_alu_cmp_gez = bjp_info [`MIPS_DECINFO_BJP_BGEZ];
-assign bjp_req_alu_cmp_ltz = bjp_info [`MIPS_DECINFO_BJP_BLTZ];
-assign bjp_req_alu_cmp_eq  = bjp_info [`MIPS_DECINFO_BJP_BEQ];
-assign bjp_req_alu_cmp_ne  = bjp_info [`MIPS_DECINFO_BJP_BNE];
-assign bjp_req_alu_cmp_lez = bjp_info [`MIPS_DECINFO_BJP_BLEZ];
-assign bjp_req_alu_cmp_gtz = bjp_info [`MIPS_DECINFO_BJP_BGTZ];
+wire bjp_bgez = bjp_info [`MIPS_DECINFO_BJP_BGEZ];
+wire bjp_bltz = bjp_info [`MIPS_DECINFO_BJP_BLTZ];
+wire bjp_beq  = bjp_info [`MIPS_DECINFO_BJP_BEQ];
+wire bjp_bne  = bjp_info [`MIPS_DECINFO_BJP_BNE];
+wire bjp_blez = bjp_info [`MIPS_DECINFO_BJP_BLEZ];
+wire bjp_bgtz = bjp_info [`MIPS_DECINFO_BJP_BGTZ];
+
+assign bjp_req_alu_cmp_gez = bjp_bgez;
+assign bjp_req_alu_cmp_ltz = bjp_bltz;
+assign bjp_req_alu_cmp_eq  = bjp_beq;
+assign bjp_req_alu_cmp_ne  = bjp_bne;
+assign bjp_req_alu_cmp_lez = bjp_blez;
+assign bjp_req_alu_cmp_gtz = bjp_bgtz;
+
+assign bjp_req_alu_add = bjp_beq | bjp_bne;
 
 endmodule  // mips_ex_alu_bjp

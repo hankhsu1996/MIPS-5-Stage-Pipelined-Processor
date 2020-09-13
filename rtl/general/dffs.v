@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
 //     Auther:        Shou-Li Hsu
-//     Entity Name:   dff_ce_rstn_0
-//                    dff_ce_rstn_1
-//                    dff_ce
-//                    dff_rstn_0
-//                    dff_rstn_1
+//     Entity Name:   dffcr
+//                    dffcs
+//                    dffc
+//                    dffr
+//                    dffs
 //                    latch
 //     Purpose:       These serve as registers with different functionaility.
 //     
@@ -22,7 +22,7 @@
 // Default reset value is 0
 ////////////////////////////////////////////////////////////////////////////////
 
-module dff_ce_rstn_0 # (
+module dffcr # (
     parameter DW = 1
 ) (
     input  wire          clk,
@@ -50,7 +50,7 @@ xchecker #(
 );
 `endif
 
-endmodule // dff_ce_rstn_0
+endmodule // dffcr
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ endmodule // dff_ce_rstn_0
 // Default reset value is 1
 ////////////////////////////////////////////////////////////////////////////////
 
-module dff_ce_rstn_1 # (
+module dffcs # (
     parameter DW = 1
 ) (
     input  wire          clk,
@@ -86,14 +86,14 @@ xchecker #(
 );
 `endif
 
-endmodule // dff_ce_rstn_1
+endmodule // dffcs
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // D flip-flop with clock enable without reset
 ////////////////////////////////////////////////////////////////////////////////
 
-module dff_ce # (
+module dffc # (
     parameter DW = 1
 ) (
     input  wire          clk,
@@ -118,7 +118,7 @@ xchecker #(
 );
 `endif
 
-endmodule // dff_ce
+endmodule // dffc
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ endmodule // dff_ce
 // Default reset value is 0
 ////////////////////////////////////////////////////////////////////////////////
 
-module dff_rstn_0 # (
+module dffr # (
     parameter DW = 1
 ) (
     input  wire          clk,
@@ -144,7 +144,7 @@ always @(posedge clk) begin
         q_o <= #TCQ d_i;
 end
 
-endmodule // dff_rstn_0
+endmodule // dffr
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ endmodule // dff_rstn_0
 // Default reset value is 1
 ////////////////////////////////////////////////////////////////////////////////
 
-module dff_rstn_1 # (
+module dffs # (
     parameter DW = 1
 ) (
     input  wire          clk,
@@ -170,7 +170,7 @@ always @(posedge clk) begin
         q_o <= #TCQ d_i;
 end
 
-endmodule // dff_rstn_1
+endmodule // dffs
 
 
 ////////////////////////////////////////////////////////////////////////////////

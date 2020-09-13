@@ -9,7 +9,7 @@
 //                    Version:         1.0
 //                    Filename:        mips_id_regfile.v
 //                    Date Created:    August 30, 2020
-//                    Last Modified:   September 12, 2020
+//                    Last Modified:   September 13, 2020
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -42,9 +42,9 @@ generate
         end 
         else begin
             assign rf_wen[i] = wb_dest_en & wb_dest_idx == i;
-            dff_ce #(
+            dffc #(
                 .DW(`MIPS_DATA_WIDTH)
-            ) dff_ce_inst (
+            ) dffc_rf (
                 .clk(clk),
                 .ce(rf_wen[i]),
                 .d_i(wb_dest_dat),

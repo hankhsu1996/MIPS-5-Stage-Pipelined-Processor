@@ -27,10 +27,14 @@ module mips_ex_alu (
     input wire id2ex_rd_wen,
 
     // EX to MEM interface
-    output wire ex2mem_read,
-    output wire ex2mem_write,
-    output wire [`MIPS_ADDR_WIDTH-1:0] ex2mem_addr,
-    output wire [`MIPS_DATA_WIDTH-1:0] ex2mem_wdata
+    output wire ex2mem_mem_read,
+    output wire ex2mem_mem_write,
+    output wire [`MIPS_ADDR_WIDTH-1:0] ex2mem_mem_addr,
+    output wire [`MIPS_DATA_WIDTH-1:0] ex2mem_mem_wdat,
+
+    output wire [`MIPS_RFIDX_WIDTH-1:0] ex2mem_rd_idx,
+    output wire [ `MIPS_DATA_WIDTH-1:0] ex2mem_rd_wdat,
+    output wire ex2mem_rd_wen
 );
 
 
@@ -109,6 +113,12 @@ wire [`MIPS_DECINFO_WIDTH-1:0] agu_info = {`MIPS_DECINFO_WIDTH {agu_op}} & id2ex
 wire [`MIPS_DATA_WIDTH-1:0] agu_req_alu_op1;
 wire [`MIPS_DATA_WIDTH-1:0] agu_req_alu_op2;
 
+wire agu_req_alu_add;
+wire agu_mem_read;
+wire agu_mem_write;
+
+wire [`MIPS_DATA_WIDTH-1:0] agu_mem_wdat;
+
 mips_ex_alu_agu mips_ex_alu_agu_inst (
     .agu_rs   (agu_rs),
     .agu_rt   (agu_rt),
@@ -117,7 +127,12 @@ mips_ex_alu_agu mips_ex_alu_agu_inst (
 
     // Shared ALU datapath interface
     .agu_req_alu_op1 (agu_req_alu_op1),
-    .agu_req_alu_op2 (agu_req_alu_op2)
+    .agu_req_alu_op2 (agu_req_alu_op2),
+
+    .agu_req_alu_add  (agu_req_alu_add),
+    .agu_mem_read     (agu_mem_read),
+    .agu_mem_write    (agu_mem_write),
+    .agu_mem_wdat     (agu_mem_wdat)
 );
 
 
@@ -141,6 +156,7 @@ wire bjp_req_alu_cmp_eq;
 wire bjp_req_alu_cmp_ne;
 wire bjp_req_alu_cmp_lez;
 wire bjp_req_alu_cmp_gtz;
+wire bjp_req_alu_add;
 
 mips_ex_alu_bjp mips_ex_alu_bjp_inst (
     .bjp_rs      (bjp_rs),
@@ -158,7 +174,90 @@ mips_ex_alu_bjp mips_ex_alu_bjp_inst (
     .bjp_req_alu_cmp_eq  (bjp_req_alu_cmp_eq),
     .bjp_req_alu_cmp_ne  (bjp_req_alu_cmp_ne),
     .bjp_req_alu_cmp_lez (bjp_req_alu_cmp_lez),
-    .bjp_req_alu_cmp_gtz (bjp_req_alu_cmp_gtz)
+    .bjp_req_alu_cmp_gtz (bjp_req_alu_cmp_gtz),
+    .bjp_req_alu_add     (bjp_req_alu_add)
 );
+
+
+////////////////////////////////////////////////////////////////////////////////
+// ALU datapath
+////////////////////////////////////////////////////////////////////////////////
+
+wire alu_req_alu = alu_op & id2ex_rd_wen;
+wire agu_req_alu = agu_op;
+wire bjp_req_alu = bjp_op;
+
+wire [`MIPS_DATA_WIDTH-1:0] alu_req_alu_res;
+wire [`MIPS_DATA_WIDTH-1:0] agu_req_alu_res;
+wire [`MIPS_DATA_WIDTH-1:0] bjp_req_alu_add_res;
+wire bjp_req_alu_cmp_res;
+
+mips_ex_alu_dpath mips_ex_alu_dpath_inst (
+    // Regular ALU request
+    .alu_req_alu         (alu_req_alu),
+
+    .alu_req_alu_op1     (alu_req_alu_op1),
+    .alu_req_alu_op2     (alu_req_alu_op2),
+
+    .alu_req_alu_add     (alu_req_alu_add),
+    .alu_req_alu_addu    (alu_req_alu_addu),
+    .alu_req_alu_sub     (alu_req_alu_sub),
+    .alu_req_alu_subu    (alu_req_alu_subu),
+    .alu_req_alu_and     (alu_req_alu_and),
+    .alu_req_alu_or      (alu_req_alu_or),
+    .alu_req_alu_xor     (alu_req_alu_xor),
+    .alu_req_alu_nor     (alu_req_alu_nor),
+    .alu_req_alu_sll     (alu_req_alu_sll),
+    .alu_req_alu_srl     (alu_req_alu_srl),
+    .alu_req_alu_sra     (alu_req_alu_sra),
+    .alu_req_alu_slt     (alu_req_alu_slt),
+    .alu_req_alu_sltu    (alu_req_alu_sltu),
+    .alu_req_alu_lui     (alu_req_alu_lui),
+
+    .alu_req_alu_res     (alu_req_alu_res),
+
+    // AGU request
+    .agu_req_alu         (agu_req_alu),
+
+    .agu_req_alu_op1     (agu_req_alu_op1),
+    .agu_req_alu_op2     (agu_req_alu_op2),
+
+    .agu_req_alu_add     (agu_req_alu_add),
+
+    .agu_req_alu_res     (agu_req_alu_res),
+
+    // BJP request
+    .bjp_req_alu         (bjp_req_alu),
+
+    .bjp_req_alu_op1     (bjp_req_alu_op1),
+    .bjp_req_alu_op2     (bjp_req_alu_op2),
+
+    .bjp_req_alu_cmp_gez (bjp_req_alu_cmp_gez),
+    .bjp_req_alu_cmp_ltz (bjp_req_alu_cmp_ltz),
+    .bjp_req_alu_cmp_eq  (bjp_req_alu_cmp_eq),
+    .bjp_req_alu_cmp_ne  (bjp_req_alu_cmp_ne),
+    .bjp_req_alu_cmp_lez (bjp_req_alu_cmp_lez),
+    .bjp_req_alu_cmp_gtz (bjp_req_alu_cmp_gtz),
+    .bjp_req_alu_add     (bjp_req_alu_add),
+
+    .bjp_req_alu_add_res (bjp_req_alu_add_res),
+    .bjp_req_alu_cmp_res (bjp_req_alu_cmp_res)
+);
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Generate output data
+////////////////////////////////////////////////////////////////////////////////
+
+assign ex2mem_mem_read = agu_mem_read;
+assign ex2mem_mem_write = agu_mem_write;
+assign ex2mem_mem_addr = {`MIPS_DATA_WIDTH {agu_op}} & agu_req_alu_res;
+assign ex2mem_mem_wdat = agu_mem_wdat;
+
+assign ex2mem_rd_idx = id2ex_rd_idx;
+assign ex2mem_rd_wdat = 
+    {`MIPS_DATA_WIDTH {alu_op}} & alu_req_alu_res |
+    {`MIPS_DATA_WIDTH {bjp_op}} & bjp_req_alu_add_res;
+assign ex2mem_rd_wen = id2ex_rd_wen;
 
 endmodule

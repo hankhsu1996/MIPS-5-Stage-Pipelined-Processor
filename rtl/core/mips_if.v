@@ -128,9 +128,9 @@ wire bjp_req = minidec_bjp & prdt_taken;
 assign pc_nxt = bjp_req ? prdt_pc : pc_incr;
 
 
-dff_ce_rstn_0 # (
+dffcr # (
     .DW (`MIPS_ADDR_WIDTH)
-) pc_dff_rstn_0 (
+) dffcr_pc (
     .clk   (clk),
     .rst_n (rst_n),
     .d_i   (pc_nxt),
